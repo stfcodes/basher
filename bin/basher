@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "pry"
+require "basher"
+
+Curtis.show do |screen|
+  game = Basher::Game.new
+  game.transition_to :menu
+
+  Curtis::Input.get do |key|
+    result = game.handle(key)
+    break if result == :quit
+    game.render
+  end
+end

@@ -12,12 +12,22 @@ module Basher
     end
 
     def total_elapsed
-      @total_elapsed + elapsed
+      running? ? @total_elapsed + elapsed : @total_elapsed
+    end
+
+    def total_elapsed_humanized
+      seconds = total_elapsed / 1000
+      [[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map do |count, name|
+        if seconds > 0
+          seconds, n = seconds.divmod(count)
+          "#{n.to_i} #{name}"
+        end
+      end.compact.reverse.join(' ')
     end
 
     def start
-      @started_at = now
       @stopped_at = nil
+      @started_at = now
     end
 
     def stop
@@ -26,8 +36,9 @@ module Basher
     end
 
     def reset
-      @started_at = now
       @stopped_at = nil
+      @started_at = nil
+      @total_elapsed = 0
     end
 
     private

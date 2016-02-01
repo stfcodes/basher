@@ -3,6 +3,8 @@ require 'basher/ui/debug_view'
 require 'basher/ui/loading_view'
 require 'basher/ui/title_view'
 require 'basher/ui/menu_view'
+require 'basher/ui/current_word_view'
+require 'basher/ui/score_view'
 
 module Basher
   module UI
@@ -15,7 +17,9 @@ module Basher
         when :menu
           [title_view, menu_view]
         when :in_game
-          []
+          [current_word_view]
+        when :score
+          [score_view]
         when :paused
           [title_view, menu_view]
         else
@@ -56,6 +60,26 @@ module Basher
         v.lines     = MenuView.lines
         v.line      = -> { v.parent.lines - MenuView.lines }
         v.state     = state
+      end
+    end
+
+    def current_word_view
+      @current_word_view ||= CurrentWordView.new do |v|
+        v.lines = CurrentWordView.lines
+        v.line  = -> {
+          (v.parent.lines - CurrentWordView.lines) / 2
+        }
+        v.game = self
+      end
+    end
+
+    def score_view
+      @score_view ||= ScoreView.new do |v|
+        v.lines = ScoreView.lines
+        v.line  = -> {
+          (v.parent.lines - ScoreView.lines) / 2
+        }
+        v.game = self
       end
     end
 

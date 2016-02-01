@@ -32,7 +32,7 @@ module Basher
         left_part = [state, last_input].compact
 
         if game.state.in_game?
-          seconds_elapsed = game.timer.elapsed
+          seconds_elapsed = game.timer.total_elapsed
           left_part.unshift seconds_elapsed
         end
 

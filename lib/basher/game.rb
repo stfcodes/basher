@@ -26,8 +26,12 @@ module Basher
 
       Handler.bind :escape do
         case state.current
-        when :in_game then transition_to(:paused)
-        when :paused  then transition_to(:in_game)
+        when :in_game
+          timer.stop
+          transition_to(:paused)
+        when :paused
+          timer.start
+          transition_to(:in_game)
         end
       end
 
@@ -36,7 +40,6 @@ module Basher
         when :menu
           transition_to(:loading)
           # Preload data here <<<<<<<
-
           transition_to(:in_game)
         end
       end

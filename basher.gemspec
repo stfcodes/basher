@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry"
   spec.add_development_dependency "binding_of_caller"
   spec.add_development_dependency "pry-byebug"
-  spec.add_dependency "curtis", "~> 0.1.1"
+  spec.add_dependency "curtis", "~> 0.1.3"
 end

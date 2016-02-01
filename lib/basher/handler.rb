@@ -6,7 +6,8 @@ module Basher
       def bind(*keys, &action)
         @bindings ||= {}
         keys.map(&:to_sym).each do |key|
-          @bindings[key] = action
+          @bindings[key] ||= []
+          @bindings[key] << action
         end
       end
     end
@@ -18,7 +19,9 @@ module Basher
     end
 
     def invoke(key)
-      bindings.fetch(key.to_sym, -> {}).call
+      bindings.fetch(key.to_sym, []).map do |b|
+        b.call(key)
+      end.last
     end
   end
 end

@@ -4,6 +4,7 @@ require 'basher/ui/loading_view'
 require 'basher/ui/title_view'
 require 'basher/ui/menu_view'
 require 'basher/ui/current_word_view'
+require 'basher/ui/remaining_words_view'
 require 'basher/ui/score_view'
 
 module Basher
@@ -17,7 +18,7 @@ module Basher
         when :menu
           [title_view, menu_view]
         when :in_game
-          [current_word_view]
+          [current_word_view, remaining_words_view]
         when :score
           [score_view]
         when :paused
@@ -68,6 +69,16 @@ module Basher
         v.lines = CurrentWordView.lines
         v.line  = -> {
           (v.parent.lines - CurrentWordView.lines) / 2
+        }
+        v.game = self
+      end
+    end
+
+    def remaining_words_view
+      @remaining_words_view ||= RemainingWordsView.new do |v|
+        v.lines = RemainingWordsView.lines
+        v.line  = -> {
+          v.parent.lines / 2 + CurrentWordView.lines
         }
         v.game = self
       end

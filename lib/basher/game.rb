@@ -15,7 +15,9 @@ module Basher
     attr_reader :current_word
     attr_reader :remaining_words
 
+    attr_reader :characters
     attr_reader :misses
+    attr_reader :words
 
     private def setup_default_bindings
       Handler.bind :resize do
@@ -38,23 +40,26 @@ module Basher
           timer.start
           transition_to(:in_game)
         when :score
-          timer.reset
-          transition_to(:menu)
+          back_to_menu
+        end
+      end
+
+      Handler.bind :enter do
+        case state.current
+        when :score
+          back_to_menu
         end
       end
 
       Handler.bind 's' do
         case state.current
         when :menu
-          transition_to(:loading)
-          # Preload data here <<<<<<<
-          setup_levels
-          transition_to(:in_game)
+          start_game
         end
       end
     end
 
-    def initialize(base_view:, state: :loading, debug: true, bindings: {})
+    def initialize(base_view:, state: :menu, debug: true, bindings: {})
       @debug = debug
 
       @base_view = base_view
@@ -76,26 +81,21 @@ module Basher
     def handle(input)
       debug_view.last_input = input if debugging?
 
-      execute!(input) if state.in_game?
+      if state.in_game? && handler.letter?(input)
+        execute_logic input
+      end
 
       handler.invoke(input)
     end
 
-    def setup_levels
-      # @remaining_words = %w(without you magnetic iam believe now random keepin dont drawn get feelin alright somehow).shuffle
-      @remaining_words = %w(without you magnetic).shuffle
-      @min_hits = @remaining_words.map(&:size).reduce(:+)
-      @misses   = 0
-      @current_word = @remaining_words.shift
-    end
-
-    def execute!(char)
+    def execute_logic(char)
       return @misses += 1 unless @current_word.start_with? char
 
       @current_word = @current_word[1..-1]
 
       if @current_word.empty?
         @current_word = @remaining_words.shift
+        @words += 1
       end
 
       if @current_word.nil?
@@ -107,7 +107,21 @@ module Basher
     end
 
     def accuracy
-      @min_hits.to_f / (@min_hits + @misses)
+      characters.to_f / total_presses
+    end
+
+    def words_per_minute
+      words * 60 / timer.total_elapsed_in_seconds
+    end
+    alias_method :wpm, :words_per_minute
+
+    def chars_per_minute
+      total_presses * 60 / timer.total_elapsed_in_seconds
+    end
+    alias_method :cpm, :chars_per_minute
+
+    def total_presses
+      characters + misses
     end
 
     def render
@@ -140,6 +154,10 @@ module Basher
 
     private
 
+    def playing?
+      state.playing? && input.letter?
+    end
+
     def before_transition
       clear
       refresh
@@ -147,6 +165,26 @@ module Basher
 
     def after_transition
       render
+    end
+
+    def back_to_menu
+      timer.reset
+      transition_to(:menu)
+    end
+
+    def start_game
+      transition_to(:loading)
+      setup_game
+      transition_to(:in_game)
+      timer.start
+    end
+
+    def setup_game
+      @remaining_words  = %w(hey way print may you drink book coding programmer ruby lambda function proc procedure blog vlog jesus hermanos happy shallow realise).shuffle
+      @characters       = @remaining_words.map(&:size).reduce(:+)
+      @misses           = 0
+      @words            = 0
+      @current_word     = @remaining_words.shift
     end
   end
 end

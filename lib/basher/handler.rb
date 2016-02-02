@@ -1,13 +1,15 @@
 module Basher
   class Handler
+    ALPHABET = ('a'..'z').to_a.freeze
+
     class << self
       attr_reader :bindings
 
       def bind(*keys, &action)
         @bindings ||= {}
-        keys.map(&:to_sym).each do |key|
-          @bindings[key] ||= []
-          @bindings[key] << action
+        keys.map(&:to_sym).each do |input|
+          @bindings[input] ||= []
+          @bindings[input] << action
         end
       end
     end
@@ -18,10 +20,15 @@ module Basher
       @bindings = self.class.bindings.merge(custom_bindings)
     end
 
-    def invoke(key)
-      bindings.fetch(key.to_sym, []).map do |b|
-        b.call(key)
+    def invoke(input)
+      bindings.fetch(input.to_sym, []).map do |b|
+        b.call(input)
       end.last
+    end
+
+    def letter?(input)
+      return false if input.size != 1
+      input =~ /[[:alpha:]]/
     end
   end
 end

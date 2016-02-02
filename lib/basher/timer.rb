@@ -3,10 +3,10 @@ module Basher
     attr_reader :started_at, :stopped_at, :total_elapsed
 
     def initialize
-      @started_at = now
-      @total_elapsed = 0
+      reset
     end
 
+    # Milliseconds
     def elapsed
       ((looking_at - started_at) * 1000).ceil
     end
@@ -15,9 +15,13 @@ module Basher
       running? ? @total_elapsed + elapsed : @total_elapsed
     end
 
+    def total_elapsed_in_seconds
+      (total_elapsed.to_f / 1000).round
+    end
+
     def total_elapsed_humanized
-      seconds = total_elapsed / 1000
-      [[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map do |count, name|
+      seconds = total_elapsed_in_seconds
+      [[60, :seconds], [60, :minutes], [24, :hours]].map do |count, name|
         if seconds > 0
           seconds, n = seconds.divmod(count)
           "#{n.to_i} #{name}"

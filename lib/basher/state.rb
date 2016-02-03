@@ -14,7 +14,8 @@ module Basher
       end
     end
 
-    attr_reader :current
+    attr_reader   :current
+    attr_accessor :difficulty
 
     def initialize(initial_state = :loading)
       @current = initial_state
@@ -36,6 +37,10 @@ module Basher
 
     def transition_to(state)
       @current = state if transitions.include?(state)
+    end
+
+    def current_difficulty
+
     end
   end
 end

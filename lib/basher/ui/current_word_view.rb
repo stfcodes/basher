@@ -9,7 +9,7 @@ module Basher
 
       def setup
         clear
-        puts game.current_word, h: :center, v: :center
+        puts game.word.remaining, h: :center, v: :center
       end
     end
   end

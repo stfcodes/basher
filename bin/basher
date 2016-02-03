@@ -5,7 +5,7 @@ require "pry"
 require "basher"
 
 Curtis.show do |screen|
-  game = Basher::Game.new(base_view: screen, debug: false)
+  game = Basher::Game.new(base_view: screen)
 
   Curtis::Input.get do |key|
     result = game.handle(key)

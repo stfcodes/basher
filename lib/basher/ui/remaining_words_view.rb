@@ -9,7 +9,7 @@ module Basher
 
       def setup
         clear
-        words = game.remaining_words.join(' ')
+        words = game.level.remaining[1..-1].join(' ')
         puts words, h: :center, v: :center
       end
     end

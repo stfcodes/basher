@@ -1,22 +1,26 @@
 require 'basher/timer'
 require 'basher/state'
 require 'basher/handler'
+require 'basher/dictionary'
+require 'basher/cursor'
+require 'basher/word'
+require 'basher/level'
+
 
 module Basher
   class Game
     include UI
 
-    attr_accessor :base_view
-    attr_reader   :timer
-    attr_reader   :handler
-    attr_reader   :state
-    attr_reader   :debug
+    attr_reader :base_view
+    attr_reader :timer
+    attr_reader :handler
+    attr_reader :state
+    attr_reader :debug
 
-    attr_reader :current_word
-    attr_reader :remaining_words
-
-    attr_reader :characters
+    attr_reader :difficulty
+    attr_reader :level
     attr_reader :misses
+    attr_reader :characters
     attr_reader :words
 
     private def setup_default_bindings
@@ -26,8 +30,9 @@ module Basher
 
       Handler.bind 'q' do
         case state.current
-        when :paused  then transition_to(:menu)
+        when :paused  then back_to_menu
         when :menu    then :quit
+        when :score   then back_to_menu
         end
       end
 
@@ -59,7 +64,7 @@ module Basher
       end
     end
 
-    def initialize(base_view:, state: :menu, debug: true, bindings: {})
+    def initialize(base_view:, state: :menu, debug: false, bindings: {})
       @debug = debug
 
       @base_view = base_view
@@ -74,10 +79,6 @@ module Basher
       @timer = Timer.new
     end
 
-    def debugging?
-      @debug
-    end
-
     def handle(input)
       debug_view.last_input = input if debugging?
 
@@ -89,21 +90,33 @@ module Basher
     end
 
     def execute_logic(char)
-      return @misses += 1 unless @current_word.start_with? char
+      return @misses += 1 unless char == word.char
+      next_letter!
+    end
 
-      @current_word = @current_word[1..-1]
+    def word
+      level.word
+    end
 
-      if @current_word.empty?
-        @current_word = @remaining_words.shift
-        @words += 1
-      end
+    def next_letter!
+      @characters += 1
+      word.advance!
 
-      if @current_word.nil?
-        timer.stop
-        transition_to(:score)
-      else
-        @current_word
-      end
+      next_word! if word.finished?
+    end
+
+    def next_word!
+      @words += 1
+      level.advance!
+
+      next_level! if level.finished?
+    end
+
+    def next_level!
+      return stop_game if difficulty >= Level::MAX_DIFFICULTY
+
+      @difficulty += 1
+      @level       = Level.new(difficulty)
     end
 
     def accuracy
@@ -154,6 +167,10 @@ module Basher
 
     private
 
+    def debugging?
+      @debug
+    end
+
     def playing?
       state.playing? && input.letter?
     end
@@ -174,17 +191,24 @@ module Basher
 
     def start_game
       transition_to(:loading)
+      Basher::Dictionary.preload
       setup_game
       transition_to(:in_game)
       timer.start
     end
 
+    def stop_game
+      timer.stop
+      transition_to(:score)
+    end
+
     def setup_game
-      @remaining_words  = %w(hey way print may you drink book coding programmer ruby lambda function proc procedure blog vlog jesus hermanos happy shallow realise).shuffle
-      @characters       = @remaining_words.map(&:size).reduce(:+)
-      @misses           = 0
-      @words            = 0
-      @current_word     = @remaining_words.shift
+      @difficulty = 1
+      @level      = Level.new(difficulty)
+
+      @characters = 0
+      @misses     = 0
+      @words      = 0
     end
   end
 end

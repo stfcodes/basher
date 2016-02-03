@@ -6,7 +6,6 @@ require 'basher/cursor'
 require 'basher/word'
 require 'basher/level'
 
-
 module Basher
   class Game
     include UI

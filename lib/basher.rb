@@ -1,4 +1,5 @@
-require "curtis"
+require 'curtis'
+require 'basher/refinements/string'
 require 'basher/version'
 require 'basher/ui'
 require 'basher/game'

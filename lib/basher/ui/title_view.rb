@@ -6,7 +6,7 @@ module Basher
       attr_accessor :state
 
       def self.lines
-        10
+        11
       end
 
       def text

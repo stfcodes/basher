@@ -11,13 +11,27 @@ module Basher
 
       def setup
         clear
-        text = game.word.remaining.ascii(font: 'roman')
 
+        remaining = game.word.remaining
         window.attron(Ncurses::A_BOLD)
-        text.lines.each do |line|
-          puts line, h: :center
+
+        if will_overflow?
+          puts remaining, h: :center, v: :center
+        else
+          text = remaining.ascii(font: 'roman')
+
+          text.lines.each do |line|
+            puts line, h: :center
+          end
         end
+
         window.attroff(Ncurses::A_BOLD)
+      end
+
+      private
+
+      def will_overflow?
+        game.word.string.ascii_size(font: 'roman') >= parent.size.columns
       end
     end
   end

@@ -18,9 +18,19 @@ module Basher
       end
 
       def setup
-        text.ascii(font: 'broadway').lines.each do |line|
-          puts line, h: :center
+        if will_overflow?
+          puts text, h: :center, v: :center
+        else
+          text.ascii(font: 'broadway').lines.each do |line|
+            puts line, h: :center
+          end
         end
+      end
+
+      private
+
+      def will_overflow?
+        text.ascii_size(font: 'broadway') >= parent.columns
       end
     end
   end

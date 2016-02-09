@@ -40,7 +40,7 @@ module Basher
       end
 
       def setup_right_part
-        active_views  = game.send(:views).map do |v|
+        active_views  = game.send(:current_views).map do |v|
           v.class.to_s.gsub(/^.*::/, '')
         end.join(', ')
         terminal_size = game.base_view.size

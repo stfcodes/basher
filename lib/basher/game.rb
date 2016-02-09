@@ -64,7 +64,7 @@ module Basher
     end
 
     def initialize(base_view:, state: :menu, debug: false, bindings: {})
-      @debug = debug
+      self.debug = debug
 
       @base_view = base_view
       base_view.refresh
@@ -138,23 +138,23 @@ module Basher
 
     def render
       base_view.render
-      views.each(&:render)
+      current_views.each(&:render)
     end
 
     def clear
       base_view.clear
-      views.each(&:clear)
+      current_views.each(&:clear)
     end
 
     def refresh
       base_view.refresh
-      views.each(&:refresh)
+      current_views.each(&:refresh)
     end
 
     def resize_and_reposition
       clear
-      views.each(&:reposition)
-      views.each(&:resize)
+      views.each(&:will_resize!)
+      current_views.each(&:resize_and_reposition)
       render
     end
 
@@ -170,6 +170,13 @@ module Basher
       @debug
     end
 
+    def debug=(value)
+      require 'pry'
+      require 'binding_of_caller'
+
+      @debug = value
+    end
+
     def playing?
       state.playing? && input.letter?
     end
@@ -180,6 +187,10 @@ module Basher
     end
 
     def after_transition
+      views.each do |view|
+        view.resize_and_reposition if view.should_redraw
+      end
+
       render
     end
 

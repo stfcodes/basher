@@ -10,9 +10,11 @@ require 'basher/ui/score_view'
 
 module Basher
   module UI
-    module_function
-
     def views
+      @views ||= methods.grep(/(?<!base)_view/).map { |v| self.public_send(v) }.flatten
+    end
+
+    def current_views
       views = case state.current
         when :loading
           [loading_view]
@@ -27,6 +29,7 @@ module Basher
         else
           []
         end
+
       views << debug_view if debugging?
 
       views
@@ -82,7 +85,7 @@ module Basher
         v.game = self
 
         v.lines   = RemainingWordsView.lines
-        v.columns = -> { v.parent.columns * 7 / 10.to_f }
+        v.columns = -> { v.parent.columns * 8 / 10.to_f }
         v.line    = -> {
           v.parent.lines / 2 + CurrentWordView.lines
         }
@@ -95,7 +98,7 @@ module Basher
         v.game    = self
 
         v.lines   = InfoView.lines
-        v.columns = -> { v.parent.columns * 3 / 10.to_f }
+        v.columns = -> { v.parent.columns * 2 / 10.to_f }
         v.line    = -> {
           v.parent.lines / 2 + CurrentWordView.lines
         }

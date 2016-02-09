@@ -6,6 +6,8 @@ module Basher
   # that holds a frozen reference to the original string, and has a cursor
   # used for moving between the items in the string in a OOP fashion.
   class Word
+    using Basher::StringRefinements
+
     # Delegate cursor methods to the word itself.
     extend Forwardable
     def_delegators :cursor, :position, :previous,
@@ -33,15 +35,6 @@ module Basher
     # :nodoc:
     def to_s
       string
-    end
-
-    # :nodoc:
-    def ascii
-      Artii::Base.new('doom').asciify(string)
-    end
-
-    def ascii_size
-      ascii.lines.first.size
     end
   end
 end

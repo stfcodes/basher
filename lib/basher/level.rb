@@ -14,11 +14,14 @@ module Basher
 
     def_delegator :cursor, :item, :word
 
-    # How many words per difficulty level
-    WORDS_PER_DIFFICULTY = 3
+    # Biggest word size
+    MAX_WORD_SIZE = 15.freeze
 
-    # Maximum difficulty
-    MAX_DIFFICULTY = 12
+    # Word sizes
+    WORD_SIZES = (3..MAX_WORD_SIZE).freeze
+
+    # How many words per level
+    WORDS_PER_LEVEL = 8.freeze
 
     # Use this attribute to determine the number of the words,
     # and the length of the words.
@@ -29,43 +32,57 @@ module Basher
     # Returns a Level instance with the default difficulty of 1.
     def initialize(difficulty = 1)
       @difficulty = difficulty || 1
-      check_difficulty!
-      @words      = initialize_words
-      @cursor     = Cursor.new(words)
+      pick_words!
+      @cursor = Cursor.new(words)
     end
 
-    private
+    def sizes
+      WORD_SIZES
+    end
+
+    def weights
+      sizes.map { |size| calculate(size) }
+    end
+
+    def chances
+      weights.map { |weight| (weight / total_weight * 100.0).round(2) }
+    end
 
     # Get an array of words that are calculated based on the difficulty.
     # The bigger the difficulty, the bigger the words.
-    def initialize_words
-      word_sizes.map do |size|
-        Array.new(WORDS_PER_DIFFICULTY).map do
-          Basher::Word.new Basher::Dictionary.random_word(size)
-        end
-      end.flatten
+    def pick_words!(words_per_level = WORDS_PER_LEVEL)
+      @words = pick(words_per_level).map do |size|
+        Basher::Word.new(Basher::Dictionary.random_word(size))
+      end
     end
 
-    def word_sizes
-      size = difficulty + 2
-
-      case difficulty
-      when 1
-        [size, size + 1, size + 1]
-      when MAX_DIFFICULTY
-        [size - 1, size, size]
-      else
-        [size - 1, size, size + 1]
-      end
+    def pick(words = 15)
+      1.upto(words).collect { roll }
     end
 
     private
 
-    def check_difficulty!
-      if difficulty > MAX_DIFFICULTY
-        fail "Difficulty can't be higher than max difficulty"
+    def total_weight
+      weights.reduce(:+)
+    end
+
+    def roll
+      sizes_and_weights = sizes.zip(weights)
+
+      loop do
+        sizes_and_weights.shuffle.each do |tuple|
+          size, weight = *tuple
+
+          chance = (weight / weights.reduce(:+) * 100.0).round(2)
+          rolled = (rand * 100).round(2)
+          return size if rolled <= chance
+        end
       end
     end
 
+    def calculate(size)
+      weight = (difficulty / (size / 2) ) ** size
+      weight.round(2)
+    end
   end
 end

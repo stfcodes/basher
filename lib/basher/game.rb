@@ -112,7 +112,7 @@ module Basher
     end
 
     def next_level!
-      return stop_game if difficulty >= Level::MAX_DIFFICULTY
+      # return stop_game if difficulty >= Level::MAX_DIFFICULTY
 
       @difficulty += 1
       @level       = Level.new(difficulty)

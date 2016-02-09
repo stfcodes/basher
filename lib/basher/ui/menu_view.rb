@@ -5,7 +5,7 @@ module Basher
       attr_accessor :state
 
       def self.lines
-        3
+        1
       end
 
       def items
@@ -13,12 +13,11 @@ module Basher
         when :menu    then %w([S]-Start [Q]-Quit)
         when :paused  then %w([ESC]-Resume [Q]-Menu)
         else []
-        end
+        end.join(' | ')
       end
 
       def setup
-        move_cursor line: 1, column: 0
-        puts items.join(' | '), h: :center
+        puts items, h: :center
       end
     end
   end

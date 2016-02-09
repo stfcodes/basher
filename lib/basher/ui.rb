@@ -4,6 +4,7 @@ require 'basher/ui/loading_view'
 require 'basher/ui/title_view'
 require 'basher/ui/menu_view'
 require 'basher/ui/current_word_view'
+require 'basher/ui/info_view'
 require 'basher/ui/remaining_words_view'
 require 'basher/ui/score_view'
 
@@ -18,7 +19,7 @@ module Basher
         when :menu
           [title_view, menu_view]
         when :in_game
-          [current_word_view, remaining_words_view]
+          [current_word_view, info_view, remaining_words_view]
         when :score
           [score_view]
         when :paused
@@ -33,11 +34,10 @@ module Basher
 
     def debug_view
       @debug_view ||= DebugView.new do |v|
-        v.lines   = DebugView.lines
         v.game    = self
-      end
 
-      @debug_view
+        v.lines   = DebugView.lines
+      end
     end
 
     def loading_view
@@ -48,51 +48,69 @@ module Basher
 
     def title_view
       @title_view ||= TitleView.new do |v|
+        v.state     = state
+
         v.lines   = TitleView.lines
         v.line    = -> {
           (v.parent.lines - TitleView.lines - MenuView.lines) / 2
         }
-        v.state     = state
       end
     end
 
     def menu_view
       @menu_view ||= MenuView.new do |v|
+        v.state     = state
+
         v.lines     = MenuView.lines
         v.line      = -> { v.parent.lines - MenuView.lines }
-        v.state     = state
       end
     end
 
     def current_word_view
       @current_word_view ||= CurrentWordView.new do |v|
+        v.game = self
+
         v.lines = CurrentWordView.lines
         v.line  = -> {
           (v.parent.lines - CurrentWordView.lines) / 2
         }
-        v.game = self
       end
     end
 
     def remaining_words_view
       @remaining_words_view ||= RemainingWordsView.new do |v|
-        v.lines = RemainingWordsView.lines
-        v.line  = -> {
+        v.game = self
+
+        v.lines   = RemainingWordsView.lines
+        v.columns = -> { v.parent.columns * 7 / 10.to_f }
+        v.line    = -> {
           v.parent.lines / 2 + CurrentWordView.lines
         }
-        v.game = self
+        v.column = -> { v.parent.columns * 3 / 10.to_f }
+      end
+    end
+
+    def info_view
+      @info_view ||= InfoView.new do |v|
+        v.game    = self
+
+        v.lines   = InfoView.lines
+        v.columns = -> { v.parent.columns * 3 / 10.to_f }
+        v.line    = -> {
+          v.parent.lines / 2 + CurrentWordView.lines
+        }
       end
     end
 
     def score_view
       @score_view ||= ScoreView.new do |v|
+        v.game = self
+
         v.lines = ScoreView.lines
         v.line  = -> {
           (v.parent.lines - ScoreView.lines) / 2
         }
-        v.game = self
       end
     end
-
   end
 end

@@ -19,13 +19,6 @@ module Basher
       !words_list.empty?
     end
 
-    # Returns a list of chosen randomly from thw words file.
-    #
-    # +sample_size+ - the size of the sample.
-    def random_list(sample_size = 1000)
-      words_list.sample(sample_size)
-    end
-
     # Returns a random word from the words file.
     # The size argument must be greater than MIN_SIZE.
     #
@@ -39,6 +32,11 @@ module Basher
       end.sample
     end
 
+    # Group words in the list by size.
+    def grouped_words_list
+      @grouped_words_list ||= words_list.group_by(&:size)
+    end
+
     # Returns an array of words, read from a file. Also caches the list.
     def words_list
       @words_list ||= File.open(WORDS_LIST_PATH, 'r') do |file|
@@ -47,11 +45,6 @@ module Basher
           .select { |word| word =~ /\A[a-z]{#{MIN_SIZE},#{MAX_SIZE}}\z/ }
           .to_a
       end
-    end
-
-    # Group words in the list by size.
-    def grouped_words_list
-      @grouped_words_list ||= words_list.group_by(&:size)
     end
   end
 end

@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'artii'
 
 module Basher
   # Initializing a word with a string, returns a Basher::Word instance
@@ -10,6 +11,7 @@ module Basher
     def_delegators :cursor, :position, :previous,
       :remaining, :advance!, :rewind!, :finished?
     def_delegator :cursor, :item, :char
+    def_delegator :string, :size
 
     # Frozen reference of the word.
     attr_reader :string
@@ -31,6 +33,15 @@ module Basher
     # :nodoc:
     def to_s
       string
+    end
+
+    # :nodoc:
+    def ascii
+      Artii::Base.new('doom').asciify(string)
+    end
+
+    def ascii_size
+      ascii.lines.first.size
     end
   end
 end

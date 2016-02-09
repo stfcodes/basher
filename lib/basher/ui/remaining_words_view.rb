@@ -4,7 +4,7 @@ module Basher
       attr_accessor :game
 
       def self.lines
-        3
+        1
       end
 
       def setup

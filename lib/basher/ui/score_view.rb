@@ -13,7 +13,7 @@ module Basher
         cpm     = game.cpm
 
         move_cursor line: 0
-        puts "Total Elapsed: #{total_elapsed}", h: :center
+        puts "Total: #{total_elapsed}", h: :center
 
         move_cursor line: 1
         puts "Words per minute: #{game.words_per_minute}", h: :center

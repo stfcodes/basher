@@ -38,11 +38,9 @@ module Basher
       Handler.bind :escape do
         case state.current
         when :in_game
-          timer.stop
-          transition_to(:paused)
+          pause_game
         when :paused
-          timer.start
-          transition_to(:in_game)
+          back_to_game
         when :score
           back_to_menu
         end
@@ -112,13 +110,16 @@ module Basher
     end
 
     def next_level!
-      # return stop_game if difficulty >= Level::MAX_DIFFICULTY
+      @difficulty = (@difficulty || 1) + 1
+      level.finish if level
 
-      @difficulty += 1
-      @level       = Level.new(difficulty)
+      @level = Level.start(difficulty) do
+        stop_game
+      end
     end
 
     def accuracy
+      return 0 if total_presses.zero?
       characters.to_f / total_presses
     end
 
@@ -194,9 +195,21 @@ module Basher
       render
     end
 
+    def pause_game
+      timer.stop
+      level.timer.stop
+      transition_to(:paused)
+    end
+
     def back_to_menu
       timer.reset
       transition_to(:menu)
+    end
+
+    def back_to_game
+      timer.start
+      level.timer.start
+      transition_to(:in_game)
     end
 
     def start_game
@@ -213,12 +226,10 @@ module Basher
     end
 
     def setup_game
-      @difficulty = 1
-      @level      = Level.new(difficulty)
-
       @characters = 0
-      @misses     = 0
-      @words      = 0
+      @misses = 0
+      @words = 0
+      next_level!
     end
   end
 end

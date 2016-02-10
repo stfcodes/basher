@@ -28,12 +28,26 @@ module Basher
     attr_reader :difficulty
     attr_reader :words
     attr_reader :cursor
+    attr_reader :timer
+
+    class << self
+      def start(difficulty, &on_end)
+        level = self.new(difficulty)
+
+        level.start do
+          on_end.call
+        end
+
+        level
+      end
+    end
 
     # Returns a Level instance with the default difficulty of 1.
     def initialize(difficulty = 1)
       @difficulty = difficulty || 1
       pick_words!
       @cursor = Cursor.new(words)
+      @timer  = Timer.new
     end
 
     def sizes
@@ -58,6 +72,31 @@ module Basher
 
     def pick(words = 15)
       1.upto(words).collect { roll }
+    end
+
+    def time_limit
+      [(difficulty + 10).ceil, 20].min * 1000
+    end
+
+    def start
+      timer.start
+
+      @thread = Thread.new do
+        begin
+          sleep 0.004 while timer.elapsed <= time_limit
+          timer.stop
+          yield
+        end
+      end
+    end
+
+    def pause
+      timer.stop
+    end
+
+    def finish
+      timer.stop
+      @thread.terminate if !@thread.nil? && @thread.alive?
     end
 
     private

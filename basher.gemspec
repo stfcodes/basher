@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["shuriu"]
   spec.email         = ["stefan.rotariu@gmail.com"]
 
-  spec.summary       = %q{small CLI text game that tests your typing speed.}
+  spec.summary       = %q{Small CLI text game that tests your typing speed.}
   spec.homepage      = "https://github.com/shuriu/basher"
   spec.license       = "MIT"
 

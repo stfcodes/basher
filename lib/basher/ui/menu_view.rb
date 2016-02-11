@@ -9,11 +9,13 @@ module Basher
       end
 
       def items
-        case state.current
-        when :menu    then %w([S]-Start [Q]-Quit)
-        when :paused  then %w([ESC]-Resume [Q]-Menu)
-        else []
-        end.join(' | ')
+        items = case state.current
+          when :menu    then %w([S]-Start [Q]-Quit)
+          when :paused  then %w([ESC]-Resume [Q]-Menu)
+          else []
+          end
+        items << "v #{Basher::VERSION}"
+        items.join(' | ')
       end
 
       def setup

@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'basher/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "basher"
+  spec.name          = "basher-basher"
   spec.version       = Basher::VERSION
   spec.authors       = ["shuriu"]
   spec.email         = ["stefan.rotariu@gmail.com"]

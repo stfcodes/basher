@@ -2,25 +2,23 @@
 
 Basher is a small CLI game that tests your typing speed.
 
+[![asciicast](https://asciinema.org/a/36151.png)](https://asciinema.org/a/36151)
+
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'basher'
+```shell
+gem install basher-basher
 ```
 
-And then execute:
+## Requirements
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install basher
+ * Ruby 2.3
 
 ## Usage
 
-TODO: Write usage instructions here
+```shell
+basher -h
+```
 
 ## Development
 
@@ -30,7 +28,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/basher.
+Bug reports and pull requests are welcome on GitHub at https://github.com/shuriu/basher.
 
 
 ## License

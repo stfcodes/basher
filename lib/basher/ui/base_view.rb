@@ -18,6 +18,11 @@ module Basher
         resize
         self.should_redraw = false
       end
+
+      def clear(also_thread = true)
+        clear_thread! if also_thread
+        window.clear
+      end
     end
   end
 end

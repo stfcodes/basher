@@ -8,20 +8,24 @@ module Basher
       end
 
       def setup
+        clear
+
         misses  = game.misses
         wpm     = game.wpm
         cpm     = game.cpm
 
-        move_cursor line: 0
-        puts "Total: #{total_elapsed}", h: :center
+        puts "Level: #{game.level.difficulty}", h: :center
 
-        move_cursor line: 1
+        cursor.newline!
+        puts "(#{total_elapsed})", h: :center
+
+        cursor.newline!
         puts "Words per minute: #{game.words_per_minute}", h: :center
 
-        move_cursor line: 2
+        cursor.newline!
         puts "Chars per minute: #{game.chars_per_minute}", h: :center
 
-        move_cursor line: 3
+        cursor.newline!
         puts "Accuracy: #{accuracy} (#{misses} misses)", h: :center
       end
 

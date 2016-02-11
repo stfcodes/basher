@@ -3,9 +3,10 @@ require 'basher/ui/debug_view'
 require 'basher/ui/loading_view'
 require 'basher/ui/title_view'
 require 'basher/ui/menu_view'
-require 'basher/ui/current_word_view'
 require 'basher/ui/info_view'
+require 'basher/ui/current_word_view'
 require 'basher/ui/remaining_words_view'
+require 'basher/ui/progress_view'
 require 'basher/ui/score_view'
 
 module Basher
@@ -21,7 +22,7 @@ module Basher
         when :menu
           [title_view, menu_view]
         when :in_game
-          [current_word_view, info_view, remaining_words_view]
+          [info_view, current_word_view, remaining_words_view, progress_view]
         when :score
           [score_view]
         when :paused
@@ -75,21 +76,11 @@ module Basher
 
         v.lines = CurrentWordView.lines
         v.line  = -> {
-          (v.parent.lines - CurrentWordView.lines) / 2
-        }
-      end
-    end
+          other = CurrentWordView.lines + InfoView.lines +
+            RemainingWordsView.lines + ProgressView.lines
 
-    def remaining_words_view
-      @remaining_words_view ||= RemainingWordsView.new do |v|
-        v.game = self
-
-        v.lines   = RemainingWordsView.lines
-        v.columns = -> { v.parent.columns * 8 / 10.to_f }
-        v.line    = -> {
-          v.parent.lines / 2 + CurrentWordView.lines
+          (v.parent.lines - other) / 2
         }
-        v.column = -> { v.parent.columns * 3 / 10.to_f }
       end
     end
 
@@ -97,11 +88,26 @@ module Basher
       @info_view ||= InfoView.new do |v|
         v.game    = self
 
+        v.line    = 0
         v.lines   = InfoView.lines
-        v.columns = -> { v.parent.columns * 2 / 10.to_f }
-        v.line    = -> {
-          v.parent.lines / 2 + CurrentWordView.lines
-        }
+      end
+    end
+
+    def remaining_words_view
+      @remaining_words_view ||= RemainingWordsView.new do |v|
+        v.game  = self
+
+        v.lines = RemainingWordsView.lines
+        v.line  = -> { v.parent.lines - 2 }
+      end
+    end
+
+    def progress_view
+      @progress_view ||= ProgressView.new do |v|
+        v.game  = self
+
+        v.lines = ProgressView.lines
+        v.line  = -> { v.parent.lines - 1 }
       end
     end
 

@@ -17,7 +17,7 @@ module Basher
           words   = remaining_words.join(' ')
         end
 
-        puts words, h: :left
+        puts words, h: :center
       end
 
       private

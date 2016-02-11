@@ -8,19 +8,7 @@ module Basher
       end
 
       def setup
-        clear
-        render every: 0.04 do
-          window.attron(Ncurses::A_BOLD)
-          puts "Level #{game.level.difficulty} #{remaining}: ", h: :right
-          window.attroff(Ncurses::A_BOLD)
-        end
-      end
-
-      private
-
-      def remaining
-        value = game.level.time_limit - game.level.timer.total_elapsed
-        Time.at(value / 1000.to_f).strftime("%S.%L").ljust(6)
+        puts "Level #{game.level.difficulty}", h: :center
       end
     end
   end

@@ -110,7 +110,7 @@ module Basher
     end
 
     def next_level!
-      @difficulty = (@difficulty || 1) + 1
+      @difficulty += 1
       level.finish if level
 
       @level = Level.start(difficulty) do
@@ -226,9 +226,10 @@ module Basher
     end
 
     def setup_game
+      @difficulty = 0
       @characters = 0
-      @misses = 0
-      @words = 0
+      @misses     = 0
+      @words      = 0
       next_level!
     end
   end

@@ -87,8 +87,12 @@ module Basher
     end
 
     def execute_logic(char)
-      return @misses += 1 unless char == word.char
-      next_letter!
+      if char == word.char
+        next_letter!
+      else
+        @misses += 1
+        level.timer.advance(200)
+      end
     end
 
     def word

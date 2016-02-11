@@ -12,7 +12,7 @@ module Basher
         render every: 0.1 do
           clear(false)
           window.attron(Ncurses::A_BOLD)
-          puts '_' * remaining, h: :left
+          puts '=' * remaining, h: :left
           window.attroff(Ncurses::A_BOLD)
         end
       end

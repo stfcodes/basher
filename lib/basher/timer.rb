@@ -1,6 +1,6 @@
 module Basher
   class Timer
-    attr_reader :started_at, :stopped_at, :total_elapsed
+    attr_reader :started_at, :stopped_at
 
     def initialize
       reset
@@ -8,11 +8,13 @@ module Basher
 
     # Milliseconds
     def elapsed
+      return @total_elapsed unless running?
       ((looking_at - started_at) * 1000).ceil
     end
 
     def total_elapsed
-      running? ? @total_elapsed + elapsed : @total_elapsed
+      return @total_elapsed unless running?
+      @total_elapsed + elapsed
     end
 
     def total_elapsed_in_seconds
@@ -45,6 +47,10 @@ module Basher
       @total_elapsed = 0
     end
 
+    def advance(milliseconds)
+      @total_elapsed += milliseconds
+    end
+
     private
 
     def now
@@ -52,7 +58,7 @@ module Basher
     end
 
     def running?
-      @stopped_at.nil?
+      !started_at.nil? && stopped_at.nil?
     end
 
     def looking_at

@@ -75,7 +75,7 @@ module Basher
     end
 
     def time_limit
-      [(difficulty + 10).ceil, 20].min * 1000
+      [((difficulty + 2) * 100.to_f / (average_word_size.to_f ** 2)).ceil, 20].min * 1000
     end
 
     def start
@@ -83,7 +83,7 @@ module Basher
 
       @thread = Thread.new do
         begin
-          sleep 0.004 while timer.elapsed <= time_limit
+          sleep 0.005 while timer.total_elapsed <= time_limit
           timer.stop
           yield
         end
@@ -97,6 +97,10 @@ module Basher
     def finish
       timer.stop
       @thread.terminate if !@thread.nil? && @thread.alive?
+    end
+
+    def average_word_size
+      words.reduce(0) { |sum, w| sum += w.string.size } / words.size
     end
 
     private

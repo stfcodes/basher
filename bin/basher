@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 require 'optparse'
 
+require 'bundler/setup'
+require 'basher'
+
 options = {
   debug: false
 }
@@ -23,9 +26,6 @@ OptionParser.new do |o|
     exit
   end
 end.parse!
-
-require 'bundler/setup'
-require 'basher'
 
 trap('INT') { exit }
 Basher.start(options)

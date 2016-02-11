@@ -7,7 +7,7 @@ Basher is a small CLI game that tests your typing speed.
 ## Installation
 
 ```shell
-gem install basher-basher
+$ gem install basher-basher
 ```
 
 ## Requirements
@@ -17,7 +17,7 @@ gem install basher-basher
 ## Usage
 
 ```shell
-basher -h
+$ basher -h
 ```
 
 ## Development

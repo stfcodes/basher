@@ -1,14 +1,31 @@
 #!/usr/bin/env ruby
+require 'optparse'
 
-require "bundler/setup"
-require "basher"
+options = {
+  debug: false
+}
 
-Curtis.show do |screen|
-  game = Basher::Game.new(base_view: screen)
+OptionParser.new do |o|
+  o.on('-d', '--debug', 'Show small debug bar at the top (kinda useless)') do
+    require 'pry'
+    require 'binding_of_caller'
 
-  Curtis::Input.get do |key|
-    result = game.handle(key)
-    break if result == :quit
-    game.render
+    options[:debug] = true
   end
-end
+
+  o.on('-v', '--version', 'Print current version') do
+    puts Basher::VERSION
+    exit
+  end
+
+  o.on('-h', '--help', 'Show this message') do
+    puts o
+    exit
+  end
+end.parse!
+
+require 'bundler/setup'
+require 'basher'
+
+trap('INT') { exit }
+Basher.start(options)

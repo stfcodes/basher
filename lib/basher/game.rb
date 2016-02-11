@@ -61,8 +61,8 @@ module Basher
       end
     end
 
-    def initialize(base_view:, state: :menu, debug: false, bindings: {})
-      self.debug = debug
+    def initialize(base_view, state: :menu, debug: false, bindings: {})
+      @debug = debug
 
       @base_view = base_view
       base_view.refresh
@@ -174,13 +174,6 @@ module Basher
 
     def debugging?
       @debug
-    end
-
-    def debug=(value)
-      require 'pry'
-      require 'binding_of_caller'
-
-      @debug = value
     end
 
     def playing?

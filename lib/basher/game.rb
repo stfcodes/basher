@@ -123,8 +123,9 @@ module Basher
     end
 
     def accuracy
-      return 0 if words.zero?
-      (words - misses).to_f / words * 100
+      return 0 if total_presses.zero?
+      value = (total_presses - misses).to_f / total_presses * 100
+      value.round(2)
     end
 
     def words_per_minute

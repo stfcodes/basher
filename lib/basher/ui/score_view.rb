@@ -34,8 +34,7 @@ module Basher
       end
 
       def accuracy
-        formula = (game.accuracy * 100).to_i
-        "%s %" % formula
+        "#{game.accuracy} %"
       end
     end
   end

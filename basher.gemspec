@@ -9,14 +9,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ["shuriu"]
   spec.email         = ["stefan.rotariu@gmail.com"]
 
-  spec.summary       = %q{Basher is a small CLI game that tests your typing speed.}
-  # spec.description   = %q{TODO: Write a longer description or delete this line.}
-  # spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{small CLI text game that tests your typing speed.}
+  spec.homepage      = "https://github.com/shuriu/basher"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  spec.bindir        = "exe"
-  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.bindir        = "bin"
+  spec.executables   = ["basher"]
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.11"

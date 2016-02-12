@@ -18,11 +18,13 @@ module Basher
       end
 
       def setup
+        clear
         if will_overflow?
           puts text, h: :center, v: :center
         else
-          text.ascii(font: 'broadway').lines.each do |line|
+          text.ascii_lines(font: 'broadway').each do |line|
             puts line, h: :center
+            cursor.newline!
           end
         end
       end
